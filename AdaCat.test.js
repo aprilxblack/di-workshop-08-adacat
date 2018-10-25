@@ -101,6 +101,18 @@ describe('AdaCat', function() {
       myCat.feed()
       expect(myCat.size).to.equal(31)
     })
+    it('does not allow to feed while sleeping', function() {
+      var myCat = new AdaCat('mittens', 'alex')
+      myCat.isSleeping = true;
+      myCat.feed()
+      expect(myCat.hunger).to.equal(5)
+    })
+    it('tells the player that they cannot feed a sleeping cat', function() {
+      var myCat = new AdaCat('mittens', 'alex')
+      myCat.isSleeping = true;
+      myCat.feed()
+      expect(myCat.message).to.equal('you cannot feed a cat while it`s sleeping')
+    })
   })
 
   describe('#nap', function() {
@@ -237,6 +249,93 @@ describe('AdaCat', function() {
       myCat.hunger = 3
       var result = myCat.getHealth()
       expect(result).to.equal(0)
+    })
+
+    it('increases tiredness by 3', function(){
+      var myCat = new AdaCat('gabi', 'alex')
+      myCat.size = 5
+      myCat.hunger = 3;
+      myCat.tiredness = 0;
+      myCat.play();
+      expect(myCat.tiredness).to.equal(3);
+    })
+
+    it('increases tiredness by 1', function(){
+      var myCat = new AdaCat('gabi', 'alex')
+      myCat.size = 5
+      myCat.hunger = 3;
+      myCat.tiredness = 0;
+      myCat.feed();
+      expect(myCat.tiredness).to.equal(1);
+    })
+
+    it('should reset tiredness to 0', function(){
+      var myCat = new AdaCat('gabi', 'alex')
+      myCat.tiredness = 5;
+      myCat.nap();
+      expect(myCat.tiredness).to.equal(0);
+    })
+
+    it('should not add to tiredness', function(){
+      var myCat = new AdaCat('gabi', 'alex')
+      myCat.tiredness = 15;
+      myCat.play();
+      expect(myCat.tiredness).to.equal(15);
+    })
+
+    it('should add only 1 to tiredness', function(){
+      var myCat = new AdaCat('gabi', 'alex')
+      myCat.tiredness = 14;
+      myCat.play();
+      expect(myCat.tiredness).to.equal(15);
+    })
+
+    it('should not add to tiredness', function(){
+      var myCat = new AdaCat('gabi', 'alex')
+      myCat.tiredness = 15;
+      myCat.feed();
+      expect(myCat.tiredness).to.equal(15);
+    })
+
+    it('should change the message to play', function(){
+      var myCat = new AdaCat('gabi', 'alex')
+      myCat.play();
+      expect(myCat.message).to.equal('the cat is playing');
+    })
+
+    it('should change the message to eat', function(){
+      var myCat = new AdaCat('gabi', 'alex')
+      myCat.feed();
+      expect(myCat.message).to.equal('the cat is eating');
+    })
+
+    it('should change the message to nap', function(){
+      var myCat = new AdaCat('gabi', 'alex')
+      myCat.nap();
+      expect(myCat.message).to.equal('the cat is napping');
+    })
+
+    it('should change the message to wake up', function(){
+      var myCat = new AdaCat('gabi', 'alex')
+      myCat.wakeUp();
+      expect(myCat.message).to.equal('the cat just woken up');
+    })
+
+    it('should change the message to take the cat to vet', function(){
+      var myCat = new AdaCat('gabi', 'alex');
+      myCat.size = 65
+      myCat.hunger = 0
+      myCat.getDescription();
+      expect(myCat.warningMessage).to.equal('take your cat to the vet');
+    })
+
+  })
+  describe('#getToVet', function() {
+    it('should max out the cat health', function() {
+      var myCat = new AdaCat('apple', 'alex')
+      myCat.getToVet();
+      var health = myCat.getHealth();
+      expect(health).to.equal(30);
     })
   })
 })
